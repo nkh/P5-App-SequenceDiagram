@@ -1,0 +1,25 @@
+# HTTP request/response — browser resolves DNS, hits CDN, CDN fetches from origin
+
+participant Browser
+participant DNS
+participant CDN
+participant Origin
+
+Browser -> DNS : resolve
+DNS --> Browser : address
+
+Browser -> CDN : GET /page
+activate CDN
+
+alt cached {
+    CDN --> Browser : 200 OK (cached)
+}
+else {
+    CDN -> Origin : GET /page
+    activate Origin
+    Origin --> CDN : 200 OK
+    deactivate Origin
+    CDN --> Browser : 200 OK
+}
+
+deactivate CDN

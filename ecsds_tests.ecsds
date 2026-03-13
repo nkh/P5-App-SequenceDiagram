@@ -1,0 +1,158 @@
+# Test 1 — minimal
+# Two participants, one interaction
+
+participant Client
+participant Server
+
+Client -> Server : "hello"
+Server --> Client : "world"
+
+
+# ==============================================================================
+# Test 2 — participant options
+# Tests alias, active, quoted names, implicit declaration
+
+participant "Large Filtering Unit" as LFU active
+actor "End User" as User
+
+User -> LFU : "submit request"
+LFU --> User : "acknowledge"
+
+# BankServer is implicitly declared
+LFU -> BankServer : "verify"
+BankServer --> LFU : "ok"
+
+
+# ==============================================================================
+# Test 3 — lifecycle
+# Tests create, destroy, activate, deactivate, state, note
+
+participant Client
+participant Server active
+
+create Session : DBSession as S
+
+Client -> Server : "login"
+activate Server
+
+Server -> S : "open"
+state S : "{connected = true}"
+note S : "session started"
+
+Server --> Client : "logged in"
+deactivate Server
+
+Client -> Server : "logout"
+activate Server
+
+Server -> S : "close"
+destroy S
+
+Server --> Client : "goodbye"
+deactivate Server
+
+
+# ==============================================================================
+# Test 4 — blocks
+# Tests alt, opt, loop, critical, nested blocks
+
+participant Client
+participant ATM
+participant Bank
+
+Client -> ATM : "insert card"
+activate ATM
+
+loop "3 attempts" {
+    ATM -> Client : "enter PIN"
+    Client -> ATM : "PIN"
+
+    alt "PIN correct" {
+        ATM -> Bank : "authorise"
+        activate Bank
+
+        opt "sufficient funds" {
+            Bank --> ATM : "approved"
+            ATM --> Client : "dispensing cash"
+        }
+
+        deactivate Bank
+    }
+    else "PIN incorrect" {
+        ATM --> Client : "wrong PIN"
+    }
+    else {
+        ATM --> Client : "card blocked"
+        destroy ATM
+    }
+}
+
+critical "atomic withdrawal" {
+    ATM -> Bank : "debit account"
+    Bank --> ATM : "debited"
+}
+
+deactivate ATM
+
+
+# ==============================================================================
+# Test 5 — annotations and filters
+# Tests ref, state across multiple participants, note across multiple,
+# ignore and consider, par, assert, neg
+
+participant UI
+participant API
+participant DB
+participant Cache
+
+ref UI, API : "authentication flow"
+
+par {
+    UI -> Cache : "prefetch"
+    UI -> API : "fetch data"
+}
+
+consider { "fetch data" "prefetch" }
+ignore : "heartbeat" "ping"
+
+state API, DB : "{transaction = open}"
+note API, DB, Cache : "all systems nominal"
+
+assert "cache always populated before response" {
+    Cache --> UI : "cached data"
+}
+
+neg "never call DB without API" {
+    UI -> DB : "direct query"
+}
+
+API -> DB : "query"
+activate DB
+
+seq "weak order" {
+    DB --> API : "rows"
+    Cache --> UI : "hit"
+}
+
+strict "exact order required" {
+    API --> UI : "response"
+    UI -> Cache : "store"
+}
+
+deactivate DB
+
+
+# ==============================================================================
+# Test 6 — error cases (these should produce parse errors when uncommented)
+
+# Referencing a destroyed participant
+# participant A
+# destroy A
+# A -> B : "after death"
+
+# Deactivating an inactive participant
+# participant C
+# deactivate C
+
+# Unknown token
+# participant @broken

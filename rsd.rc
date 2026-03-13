@@ -1,0 +1,159 @@
+# rsd.rc — configuration file for rsd
+#
+# Pass this file with:  rsd --config rsd.rc <input>
+#
+# All values are optional. Uncomment and modify as needed.
+# Color names are Term::ANSIColor names, e.g.: bright_blue, green, "white on_blue"
+# Character values may be single characters or Unicode code points.
+#
+# -----------------------------------------------------------------------------
+# Participant color cycle
+# Each [participant] section defines one slot. Participants are assigned slots
+# in declaration order, cycling if there are more participants than slots.
+# Array values are comma-separated; one value per slot in a single block.
+# -----------------------------------------------------------------------------
+
+[participant]
+# color       = bright_blue,   bright_green,  bright_yellow, bright_magenta, bright_cyan, bright_red, white, bright_white
+# lifeline    = blue,          green,         yellow,        magenta,        cyan,        red,        white, white
+# activebar   = bright_cyan,   bright_green,  bright_yellow, bright_magenta, bright_cyan, bright_red, bright_white, bright_white
+# annotations = blue,          green,         yellow,        magenta,        cyan,        red,        white, white
+# arrow       = bright_blue,   bright_green,  bright_yellow, bright_magenta, bright_cyan, bright_red, white, bright_white
+# destroy     = bright_red,    bright_red,    bright_red,    bright_red,     bright_red,  bright_red, bright_red, bright_red
+
+# -----------------------------------------------------------------------------
+# Named participant override — overrides the cycle slot for that participant
+# regardless of its position in the diagram.
+# -----------------------------------------------------------------------------
+
+# [participant Client]
+# color       = bright_blue
+# lifeline    = blue
+# activebar   = bright_cyan
+# annotations = blue
+# arrow       = bright_blue
+# destroy     = bright_red
+
+# -----------------------------------------------------------------------------
+# Block header colors — one entry per operator
+# -----------------------------------------------------------------------------
+
+[blocks]
+# loop     = cyan
+# alt      = magenta
+# critical = bright_red
+# opt      = yellow
+# break    = red
+# par      = green
+# assert   = bright_white
+# neg      = red
+# seq      = white
+# strict   = white
+# default  = white
+
+# -----------------------------------------------------------------------------
+# Character set — controls every drawn character
+# ASCII defaults are shown. Unicode alternatives are in comments.
+# -----------------------------------------------------------------------------
+
+[chars]
+# Participant box corners and lines
+# participant_tl = +         # Unicode: ╭
+# participant_tr = +         # Unicode: ╮
+# participant_bl = +         # Unicode: ╰
+# participant_br = +         # Unicode: ╯
+# participant_h  = -         # Unicode: ─
+# participant_v  = |         # Unicode: │
+
+# Actor box corners and lines
+# actor_tl = .               # Unicode: ╭
+# actor_tr = .               # Unicode: ╮
+# actor_bl = '               # Unicode: ╰
+# actor_br = '               # Unicode: ╯
+# actor_h  = -               # Unicode: ─
+# actor_v  = |               # Unicode: │
+
+# Lifeline and activation bar
+# lifeline   = |             # Unicode: │
+# activation = #             # Unicode: ▐
+
+# Arrow characters
+# arrow_h      = -           # Unicode: ─
+# arrow_dashed = (space)     # Unicode: ╌  (alternates with arrow_h in ASCII)
+# arrow_right  = >           # Unicode: →
+# arrow_left   = <           # Unicode: ←
+
+# Destroy marker (3 chars wide, 2 rows tall)
+# destroy_tl = \
+# destroy_tc = X
+# destroy_tr = /
+# destroy_bl = /
+# destroy_bc = X
+# destroy_br = \
+
+# -----------------------------------------------------------------------------
+# SVG output geometry and typography
+# Used when --svg is active. All values are numbers except font_family and
+# mono_family which are CSS font-family strings.
+# -----------------------------------------------------------------------------
+
+[svg]
+# font_family      = Arial, Helvetica, sans-serif
+# mono_family      = 'Courier New', Courier, monospace
+# font_size        = 30
+# small_size       = 27
+# col_width        = 18
+# row_height       = 56
+# box_radius       = 7
+# act_bar_width    = 17
+# arrowhead_size   = 16
+# self_arrow_width = 68
+#
+# Lifeline appearance
+# lifeline_color   = #4a5568
+# lifeline_width   = 2
+# lifeline_dash    = 8,5
+#
+# SVG colors — all values are CSS color strings
+# participant_stroke = #4a5568
+# participant_fill   = #f7fafc
+# participant_text   = #1a202c
+# activebar_fill     = #bee3f8
+# activebar_stroke   = #2b6cb0
+# arrow              = #2d3748
+# label              = #1a202c
+# destroy            = #c53030
+# block_stroke       = #718096
+# block_fill         = #edf2f7
+# block_label        = #4a5568
+# annotation         = #4a5568
+
+# -----------------------------------------------------------------------------
+# Linter severity — set each check to 'error' or 'warning'
+# -----------------------------------------------------------------------------
+
+[linter]
+# duplicate_participant           = error
+# alias_shadows_participant       = error
+# create_duplicate                = error
+# destroy_undeclared              = error
+# destroy_duplicate               = warning
+# destroy_implicit                = warning
+# activate_destroyed              = error
+# double_activate                 = warning
+# deactivate_inactive             = warning
+# deactivate_no_activate          = warning
+# still_active                    = warning
+# self_interaction                = warning
+# post_destroy_interaction        = error
+# conditional_destroy_interaction = warning
+# implicit_participant            = warning
+# unused_participant              = warning
+# undeclared_participant          = warning
+# alt_single_branch               = warning
+# empty_block                     = warning
+# block_no_label                  = warning
+# nested_critical                 = error
+# break_outside_loop              = error
+# filter_unknown_message          = warning
+# ignore_and_consider             = error

@@ -1,0 +1,122 @@
+(* Extended Common Sequence Diagram Specification — EBNF Grammar *)
+
+(* ------------------------------------------------------------------ *)
+(* Terminals                                                           *)
+(* ------------------------------------------------------------------ *)
+
+letter          = "a".."z" | "A".."Z" | "_" ;
+digit           = "0".."9" ;
+name            = letter , { letter | digit } ;
+quoted_string   = '"' , { any_char_except_quote } , '"' ;
+word            = name | quoted_string | '"' , reserved , '"' ;
+arrow           = "->" | "-->" | "->>" ;
+comment         = "#" , { any_char_except_newline } ;
+
+reserved        = "participant" | "actor" | "as" | "active" | "data"
+                | "activate"   | "deactivate"
+                | "create"     | "destroy"
+                | "state"      | "note"     | "ref"
+                | "ignore"     | "consider"
+                | "alt"        | "opt"      | "loop"   | "par"
+                | "critical"   | "break"    | "assert" | "neg"
+                | "seq"        | "strict"
+                | "else"
+                ;
+
+data_block      = "{" , balanced_brace_text , "}" ;
+                (* braces are counted; content captured as-is *)
+
+message_list    = word , { [ "," ] , word } ;
+                (* comma is optional between items *)
+
+participant_list = word , { [ "," ] , word } ;
+                (* comma is optional between items *)
+
+(* ------------------------------------------------------------------ *)
+(* Root                                                                *)
+(* ------------------------------------------------------------------ *)
+
+diagram         = { statement | comment } ;
+
+(* ------------------------------------------------------------------ *)
+(* Statements                                                          *)
+(* ------------------------------------------------------------------ *)
+
+statement       = participant_declaration
+                | create
+                | destroy
+                | activate
+                | deactivate
+                | interaction
+                | state
+                | note
+                | reference
+                | ignore
+                | consider
+                | block
+                ;
+
+(* ------------------------------------------------------------------ *)
+(* Participants                                                        *)
+(* ------------------------------------------------------------------ *)
+
+participant_declaration = ( "participant" | "actor" ) , word ,
+                          { participant_option } ;
+
+participant_option      = ( "as" , word )
+                        | "active"
+                        | ( "data" , data_block )
+                        ;
+                        (* each option may appear at most once, in any order *)
+
+create          = "create" , word , [ ":" , word ] ,
+                  { participant_option } ;
+
+destroy         = "destroy" , word ;
+
+(* ------------------------------------------------------------------ *)
+(* Lifeline Modifiers                                                  *)
+(* ------------------------------------------------------------------ *)
+
+activate        = "activate"   , word ;
+deactivate      = "deactivate" , word ;
+
+(* ------------------------------------------------------------------ *)
+(* Interactions                                                        *)
+(* ------------------------------------------------------------------ *)
+
+interaction     = word , arrow , word , ":" , word ;
+
+(* ------------------------------------------------------------------ *)
+(* Annotations                                                         *)
+(* ------------------------------------------------------------------ *)
+
+state           = "state"     , participant_list , ":" , word ;
+note            = "note"      , participant_list , ":" , word ;
+reference       = "ref"       , participant_list , ":" , word ;
+
+(* ------------------------------------------------------------------ *)
+(* Message Filters                                                     *)
+(* ------------------------------------------------------------------ *)
+
+ignore          = "ignore"  , ( ( "{" , message_list , "}" )
+                              | ( ":" , message_list ) ) ;
+
+consider        = "consider" , ( ( "{" , message_list , "}" )
+                               | ( ":" , message_list ) ) ;
+
+(* ------------------------------------------------------------------ *)
+(* Blocks                                                              *)
+(* ------------------------------------------------------------------ *)
+
+block           = simple_block | alt_block ;
+
+simple_block    = block_op , [ word ] , "{" , { statement } , "}" ;
+
+block_op        = "opt"      | "loop"   | "par"    | "critical"
+                | "break"    | "assert" | "neg"    | "seq"
+                | "strict"
+                ;
+
+alt_block       = "alt" , [ word ] , "{" , { statement } , "}"
+                  { "else" , [ word ] , "{" , { statement } , "}" } ;

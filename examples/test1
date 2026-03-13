@@ -1,0 +1,10 @@
+# Test 1 — minimal
+# Two participants, one interaction
+
+participant Client
+participant Server
+
+Client -> Server : "hello"
+Server --> Client : "world"
+
+

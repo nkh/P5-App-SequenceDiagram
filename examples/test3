@@ -1,0 +1,28 @@
+# Test 3 — lifecycle
+# Tests create, destroy, activate, deactivate, state, note
+
+participant Client
+participant Server active
+
+create Session : DBSession as S
+
+Client -> Server : "login"
+activate Server
+
+Server -> S : "open"
+state S : "{connected = true}"
+note S : "session started"
+
+Server --> Client : "logged in"
+deactivate Server
+
+Client -> Server : "logout"
+activate Server
+
+Server -> S : "close"
+destroy S
+
+Server --> Client : "goodbye"
+deactivate Server
+
+

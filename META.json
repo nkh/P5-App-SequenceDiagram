@@ -1,0 +1,88 @@
+{
+   "abstract" : "sequence diagram parser with ASCII, Unicode, and SVG renderers",
+   "author" : [
+      "Nadim Khemir <nadim.khemir@gmail.com>"
+   ],
+   "dynamic_config" : 1,
+   "generated_by" : "Module::Build version 0.4234",
+   "license" : [
+      "artistic_2"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : 2
+   },
+   "name" : "App-SequenceDiagram",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Test::Exception" : "0",
+            "Test::More" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.42"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Array::Iterator::Circular" : "0",
+            "Data::TreeDumper" : "0",
+            "Getopt::Long" : "0",
+            "List::Util" : "0",
+            "Term::ANSIColor" : "0",
+            "perl" : "5.010"
+         }
+      }
+   },
+   "provides" : {
+      "SequenceDiagram::AST" : {
+         "file" : "lib/SequenceDiagram/AST.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Canvas" : {
+         "file" : "lib/SequenceDiagram/Canvas.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Config::Defaults" : {
+         "file" : "lib/SequenceDiagram/Config/Defaults.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Config::Parser" : {
+         "file" : "lib/SequenceDiagram/Config/Parser.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Lexer" : {
+         "file" : "lib/SequenceDiagram/Lexer.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Linter" : {
+         "file" : "lib/SequenceDiagram/Linter.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Parser" : {
+         "file" : "lib/SequenceDiagram/Parser.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::Renderer" : {
+         "file" : "lib/SequenceDiagram/Renderer.pm",
+         "version" : "0.01"
+      },
+      "SequenceDiagram::SVGRenderer" : {
+         "file" : "lib/SequenceDiagram/SVGRenderer.pm",
+         "version" : "0.01"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "license" : [
+         "http://www.perlfoundation.org/artistic_license_2_0"
+      ],
+      "repository" : {
+         "url" : "https://github.com/nkh/P5-App-SequenceDiagram"
+      }
+   },
+   "version" : "0.01",
+   "x_serialization_backend" : "JSON::PP version 4.07"
+}

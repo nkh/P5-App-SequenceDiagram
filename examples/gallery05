@@ -1,0 +1,38 @@
+# Hospital patient admission
+
+actor Patient
+participant Receptionist as Desk
+participant EMR
+participant InsuranceVerifier as Insurance
+participant WardSystem as Ward
+
+Patient -> Desk : arrive at reception
+Desk -> EMR : lookup patient record
+activate EMR
+EMR --> Desk : record found
+deactivate EMR
+
+Desk -> Insurance : verify coverage
+activate Insurance
+Insurance --> Desk : approved
+deactivate Insurance
+
+Desk -> EMR : create admission record
+activate EMR
+EMR --> Desk : admission ID
+deactivate EMR
+
+Desk -> Ward : assign bed
+activate Ward
+
+alt bed available {
+    Ward --> Desk : bed 4B assigned
+    deactivate Ward
+    Desk --> Patient : proceed to ward 4B
+}
+else no bed available {
+    Ward --> Desk : no beds
+    deactivate Ward
+    Desk --> Patient : please wait in lounge
+    note Desk : patient in waiting queue
+}

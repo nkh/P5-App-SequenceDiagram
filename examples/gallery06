@@ -1,0 +1,44 @@
+# CI/CD pipeline — push triggers build, test, deploy
+
+actor Developer
+participant Git
+participant CIRunner as CI
+participant Registry
+participant Staging
+participant Production
+
+Developer -> Git : git push
+Git -> CI : webhook trigger
+activate CI
+
+CI -> CI : checkout source
+CI -> CI : run unit tests
+
+alt tests pass {
+    CI -> Registry : push image
+    activate Registry
+    Registry --> CI : image tagged
+    deactivate Registry
+
+    CI -> Staging : deploy image
+    activate Staging
+    Staging --> CI : healthy
+    deactivate Staging
+
+    loop smoke tests {
+        CI -> Staging : run smoke test
+        Staging --> CI : pass
+    }
+
+    CI -> Production : rolling deploy
+    activate Production
+    Production --> CI : healthy
+    deactivate Production
+
+    CI --> Developer : pipeline succeeded
+}
+else tests fail {
+    CI --> Developer : pipeline failed
+}
+
+deactivate CI

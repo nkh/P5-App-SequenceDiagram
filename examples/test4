@@ -1,0 +1,42 @@
+# Test 4 — blocks
+# Tests alt, opt, loop, critical, nested blocks
+
+participant Client
+participant ATM
+participant Bank
+
+Client -> ATM : "insert card"
+activate ATM
+
+loop "3 attempts" {
+    ATM -> Client : "enter PIN"
+    Client -> ATM : "PIN"
+
+    alt "PIN correct" {
+        ATM -> Bank : "authorise"
+        activate Bank
+
+        opt "sufficient funds" {
+            Bank --> ATM : "approved"
+            ATM --> Client : "dispensing cash"
+        }
+
+        deactivate Bank
+    }
+    else "PIN incorrect" {
+        ATM --> Client : "wrong PIN"
+    }
+    else {
+        ATM --> Client : "card blocked"
+        destroy ATM
+    }
+}
+
+critical "atomic withdrawal" {
+    ATM -> Bank : "debit account"
+    Bank --> ATM : "debited"
+}
+
+deactivate ATM
+
+

@@ -1,0 +1,22 @@
+# version control
+^\.git/
+\.gitignore
+
+# build artifacts
+^_build/
+^blib/
+^Build$
+^Build.bat
+~$
+\.bak$
+\.old$
+\.swp$
+
+# CPAN packaging artifacts
+^MYMETA\.
+^Makefile$
+^pm_to_blib
+
+# OS artifacts
+\.DS_Store
+^Thumbs\.db

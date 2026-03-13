@@ -1,0 +1,39 @@
+# Microservice saga — order, payment, inventory, notification
+
+participant OrderService as Order
+participant PaymentService as Payment
+participant InventoryService as Inventory
+participant NotificationService as Notify
+
+Order -> Payment : reserve funds
+activate Payment
+Payment --> Order : funds reserved
+deactivate Payment
+
+Order -> Inventory : reserve stock
+activate Inventory
+
+alt stock available {
+    Inventory --> Order : stock reserved
+    deactivate Inventory
+
+    critical atomic-commit {
+        Order -> Payment : capture payment
+        Payment --> Order : captured
+        Order -> Inventory : confirm deduction
+        Inventory --> Order : confirmed
+    }
+
+    Order -> Notify : send receipt
+    Notify --> Order : sent
+}
+else out of stock {
+    Inventory --> Order : unavailable
+    deactivate Inventory
+
+    Order -> Payment : release funds
+    Payment --> Order : released
+
+    Order -> Notify : send apology
+    Notify --> Order : sent
+}

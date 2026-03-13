@@ -1,0 +1,34 @@
+# WebSocket chat session — connect, message, disconnect
+
+actor Client
+participant LoadBalancer as LB
+participant ChatServer as Chat
+participant MessageBroker as Broker
+participant PresenceService as Presence
+
+Client -> LB : WebSocket upgrade
+LB -> Chat : forward connection
+activate Chat
+
+create Session : ChatSession
+Chat -> Session : open
+note Session : authenticated, room=general
+
+Chat -> Presence : user joined
+Presence --> Chat : ack
+
+par {
+    Client -> LB : send message
+    LB -> Chat : relay
+    Chat -> Broker : publish
+    Broker --> Chat : ack
+    Chat --> Client : echo delivered
+}
+
+Client -> LB : disconnect
+LB -> Chat : close signal
+Chat -> Presence : user left
+Presence --> Chat : ack
+
+destroy Session
+deactivate Chat

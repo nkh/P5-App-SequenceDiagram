@@ -1,0 +1,28 @@
+# OAuth2 authorization code flow
+
+actor User
+participant Browser
+participant AuthServer as Auth
+participant ResourceServer as API
+
+User -> Browser : click login
+Browser -> Auth : GET /authorize
+Auth --> Browser : login form
+
+User -> Browser : submit credentials
+Browser -> Auth : POST /login
+activate Auth
+Auth --> Browser : redirect + code
+deactivate Auth
+
+Browser -> Auth : POST /token (code)
+activate Auth
+Auth --> Browser : access_token
+deactivate Auth
+
+Browser -> API : GET /data (Bearer token)
+activate API
+API -> Auth : introspect token
+Auth --> API : valid, user=alice
+API --> Browser : 200 JSON data
+deactivate API

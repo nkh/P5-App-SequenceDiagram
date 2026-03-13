@@ -1,0 +1,169 @@
+#!/usr/bin/perl
+
+use strict ;
+use warnings ;
+
+use open qw(:std :utf8) ;
+
+use FindBin qw($Bin) ;
+use lib "$Bin/../lib" ;
+
+use Getopt::Long ;
+use Data::TreeDumper ;
+
+use SequenceDiagram::Lexer ;
+use SequenceDiagram::Parser ;
+use SequenceDiagram::Linter ;
+use SequenceDiagram::Renderer ;
+use SequenceDiagram::SVGRenderer ;
+use SequenceDiagram::Config::Defaults ;
+use SequenceDiagram::Config::Parser ;
+
+# ------------------------------------------------------------------------------
+
+sub usage
+{
+print <<'END' ;
+Usage: rsd [options] <input_file>
+
+Options:
+  --help                    show this help
+  --lint                    report warnings after parsing
+  --no-canvas               skip rendering
+
+  --color                   enable ANSI color output
+  --config FILE             load color and character configuration from FILE
+  --unicode                 use Unicode box-drawing and arrow characters
+  --svg                     emit SVG to stdout instead of ASCII
+  --markdown                wrap ASCII output in a fenced code block
+  --theme NAME              apply a built-in color theme to SVG output
+                            themes: light, dark, monochrome, solarized
+
+  --debug tokenizer         print each token as it is produced
+  --debug parser            print each AST node as it is built
+  --debug parser_details    add per-field lines under each parser node
+  --debug ast               dump the full AST after parsing
+  --debug canvas            print each canvas drawing operation
+
+Multiple debug flags may be combined:
+  --debug tokenizer,parser,ast
+
+Input language: ecsds.md
+Grammar:        ecsds.ebnf
+END
+}
+
+# ------------------------------------------------------------------------------
+
+my (@debug_opts, $opt_no_canvas, $opt_lint, $opt_color, $opt_config, $opt_unicode, $opt_svg, $opt_markdown, $opt_theme) ;
+
+GetOptions
+	(
+	'help'      => sub { usage() ; exit 0 },
+	'debug=s'   => \@debug_opts,
+	'no-canvas' => \$opt_no_canvas,
+	'lint'      => \$opt_lint,
+	'color'     => \$opt_color,
+	'config=s'  => \$opt_config,
+	'unicode'   => \$opt_unicode,
+	'svg'       => \$opt_svg,
+	'markdown'  => \$opt_markdown,
+	'theme=s'   => \$opt_theme,
+	) ;
+
+my %debug = map { $_ => 1 } map { split /,/ } @debug_opts ;
+
+my $file = shift @ARGV
+	or die "Usage: rsd [options] <input_file>\n" ;
+
+open my $fh, '<', $file or die "Cannot open '$file': $!\n" ;
+my $text = do { local $/ ; <$fh> } ;
+close $fh ;
+
+my $cfg_parser = SequenceDiagram::Config::Parser->new() ;
+
+if ($opt_theme)
+	{
+	my $themes = SequenceDiagram::Config::Defaults::themes() ;
+	my $theme  = $themes->{$opt_theme}
+		or die "Unknown theme '$opt_theme'. Available: " . join(', ', sort keys %$themes) . "\n" ;
+	$cfg_parser->{svg} = { %{$cfg_parser->{svg}}, %$theme } ;
+	}
+
+my $config_file = $opt_config ;
+unless ($config_file)
+	{
+	for my $candidate ('rsd.rc', "$ENV{HOME}/.config/rsd/rsd.rc", "$ENV{HOME}/.rsd.rc")
+		{
+		if (-f $candidate)
+			{
+			$config_file = $candidate ;
+			last ;
+			}
+		}
+	}
+
+$cfg_parser->load($config_file) if $config_file ;
+
+my %render_config =
+	(
+	color         => $opt_color  // 0,
+	unicode       => $opt_unicode // 0,
+	config_parser => $cfg_parser,
+	) ;
+
+my $tokens = SequenceDiagram::Lexer->new($text, $debug{tokenizer})->tokenize() ;
+my $parser = SequenceDiagram::Parser->new($tokens, $text, \%debug) ;
+my $ast    = eval { $parser->parse_diagram() } ;
+
+if ($@)
+	{
+	if ($debug{ast})
+		{
+		my $partial =
+			{
+			type       => 'Diagram',
+			statements => $parser->{statements} // [],
+			} ;
+		print "\n--- partial AST at point of failure ---\n" ;
+		print DumpTree($partial, 'partial AST') ;
+		}
+	die $@ ;
+	}
+
+if ($debug{ast})
+	{
+	print DumpTree($ast, 'AST') ;
+	}
+
+if ($opt_lint)
+	{
+	my $severity = $cfg_parser->severity() ;
+	my @warnings = SequenceDiagram::Linter->new($severity)->check($ast) ;
+	if (@warnings)
+		{
+		print STDERR "lint warnings:\n" ;
+		print STDERR "  $_\n" for @warnings ;
+		}
+	}
+
+unless ($opt_no_canvas)
+	{
+	if ($opt_svg)
+		{
+		my $svg = SequenceDiagram::SVGRenderer->new($ast, \%debug, \%render_config)->render() ;
+		print $svg ;
+		}
+	elsif ($opt_markdown)
+		{
+		my $canvas = SequenceDiagram::Renderer->new($ast, \%debug, \%render_config)->render() ;
+		print "```\n" ;
+		print $canvas->render(0) . "\n" ;
+		print "```\n" ;
+		}
+	else
+		{
+		my $canvas = SequenceDiagram::Renderer->new($ast, \%debug, \%render_config)->render() ;
+		print $canvas->render($opt_color) . "\n" ;
+		}
+	}

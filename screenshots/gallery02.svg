@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="2106" height="1792" viewBox="0 0 2106 1792">
+  <defs>
+    <marker id="ah-solid" markerWidth="16" markerHeight="16" refX="16" refY="8" orient="auto">
+      <path d="M0,0 L16,8 L0,16 z" fill="#2d3748"/>
+    </marker>
+    <marker id="ah-dashed" markerWidth="16" markerHeight="16" refX="16" refY="8" orient="auto">
+      <path d="M0,0 L16,8 L0,16 z" fill="#2d3748"/>
+    </marker>
+    <marker id="ah-parallel" markerWidth="16" markerHeight="16" refX="16" refY="8" orient="auto">
+      <path d="M0,0 L16,8 L0,16" fill="none" stroke="#2d3748" stroke-width="1.5"/>
+    </marker>
+  </defs>
+
+  <rect width="2106" height="1792" fill="white"/>
+  <line x1="144" y1="168" x2="144" y2="1736" stroke="#2b6cb0" stroke-width="2" stroke-dasharray="8,5"/>
+  <line x1="612" y1="168" x2="612" y2="1736" stroke="#276749" stroke-width="2" stroke-dasharray="8,5"/>
+  <line x1="1080" y1="168" x2="1080" y2="1736" stroke="#b7791f" stroke-width="2" stroke-dasharray="8,5"/>
+  <line x1="1530" y1="168" x2="1530" y2="1736" stroke="#6b46c1" stroke-width="2" stroke-dasharray="8,5"/>
+  <rect x="1071.5" y="840" width="17" height="112" fill="#faf089" stroke="#2b6cb0" stroke-width="1"/>
+  <rect x="1071.5" y="1064" width="17" height="112" fill="#faf089" stroke="#2b6cb0" stroke-width="1"/>
+  <rect x="1521.5" y="1288" width="17" height="336" fill="#b794f4" stroke="#2b6cb0" stroke-width="1"/>
+  <rect x="72" y="0" width="144" height="168" rx="7" ry="7" fill="#f7fafc" stroke="#63b3ed" stroke-width="1.5"/>
+  <text x="144" y="95.4" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#63b3ed">User</text>
+  <rect x="513" y="0" width="198" height="168" rx="7" ry="7" fill="#f7fafc" stroke="#68d391" stroke-width="1.5"/>
+  <text x="612" y="95.4" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#68d391">Browser</text>
+  <rect x="1008" y="0" width="144" height="168" rx="7" ry="7" fill="#f7fafc" stroke="#faf089" stroke-width="1.5"/>
+  <text x="1080" y="95.4" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#faf089">Auth</text>
+  <rect x="1467" y="0" width="126" height="168" rx="7" ry="7" fill="#f7fafc" stroke="#b794f4" stroke-width="1.5"/>
+  <text x="1530" y="95.4" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#b794f4">API</text>
+  <text x="378" y="296" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">click login</text>
+  <line x1="144" y1="316" x2="597" y2="316" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="846" y="408" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">GET /authorize</text>
+  <line x1="612" y1="428" x2="1065" y2="428" stroke="#68d391" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="846" y="520" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">login form</text>
+  <line x1="1080" y1="540" x2="627" y2="540" stroke="#faf089" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#ah-dashed)"/>
+  <text x="378" y="632" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">submit credentials</text>
+  <line x1="144" y1="652" x2="597" y2="652" stroke="#63b3ed" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="846" y="744" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">POST /login</text>
+  <line x1="612" y1="764" x2="1065" y2="764" stroke="#68d391" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="846" y="856" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">redirect + code</text>
+  <line x1="1080" y1="876" x2="627" y2="876" stroke="#faf089" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#ah-dashed)"/>
+  <text x="846" y="968" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">POST /token (code)</text>
+  <line x1="612" y1="988" x2="1065" y2="988" stroke="#68d391" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="846" y="1080" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">access_token</text>
+  <line x1="1080" y1="1100" x2="627" y2="1100" stroke="#faf089" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#ah-dashed)"/>
+  <text x="1071" y="1192" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">GET /data (Bearer token)</text>
+  <line x1="612" y1="1212" x2="1515" y2="1212" stroke="#68d391" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="1305" y="1304" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">introspect token</text>
+  <line x1="1530" y1="1324" x2="1095" y2="1324" stroke="#b794f4" stroke-width="1.5" marker-end="url(#ah-solid)"/>
+  <text x="1305" y="1416" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">valid, user=alice</text>
+  <line x1="1080" y1="1436" x2="1515" y2="1436" stroke="#faf089" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#ah-dashed)"/>
+  <text x="1071" y="1528" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#1a202c">200 JSON data</text>
+  <line x1="1530" y1="1548" x2="627" y2="1548" stroke="#b794f4" stroke-width="1.5" stroke-dasharray="6,4" marker-end="url(#ah-dashed)"/>
+</svg>

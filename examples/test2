@@ -1,0 +1,14 @@
+# Test 2 — participant options
+# Tests alias, active, quoted names, implicit declaration
+
+participant "Large Filtering Unit" as LFU active
+actor "End User" as User
+
+User -> LFU : "submit request"
+LFU --> User : "acknowledge"
+
+# BankServer is implicitly declared
+LFU -> BankServer : "verify"
+BankServer --> LFU : "ok"
+
+

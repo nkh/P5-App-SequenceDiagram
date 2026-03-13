@@ -1,0 +1,46 @@
+# Test 5 — annotations and filters
+# Tests ref, state across multiple participants, note across multiple,
+# ignore and consider, par, assert, neg
+
+participant UI
+participant API
+participant DB
+participant Cache
+
+ref UI, API : "authentication flow"
+
+par {
+    UI -> Cache : "prefetch"
+    UI -> API : "fetch data"
+}
+
+consider { "fetch data" "prefetch" }
+ignore : "heartbeat" "ping"
+
+state API, DB : "{transaction = open}"
+note API, DB, Cache : "all systems nominal"
+
+assert "cache always populated before response" {
+    Cache --> UI : "cached data"
+}
+
+neg "never call DB without API" {
+    UI -> DB : "direct query"
+}
+
+API -> DB : "query"
+activate DB
+
+seq "weak order" {
+    DB --> API : "rows"
+    Cache --> UI : "hit"
+}
+
+strict "exact order required" {
+    API --> UI : "response"
+    UI -> Cache : "store"
+}
+
+deactivate DB
+
+

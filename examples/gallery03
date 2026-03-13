@@ -1,0 +1,37 @@
+# E-commerce checkout — cart, payment, inventory, notification
+
+actor Customer
+participant Cart
+participant PaymentGateway as Payment
+participant Inventory
+participant EmailService as Email
+
+Customer -> Cart : add items
+Customer -> Cart : checkout
+
+Cart -> Inventory : reserve items
+activate Inventory
+Inventory --> Cart : reserved
+deactivate Inventory
+
+Cart -> Payment : charge card
+activate Payment
+
+alt payment success {
+    Payment --> Cart : approved
+    deactivate Payment
+
+    Cart -> Inventory : confirm deduction
+    Cart -> Email : send confirmation
+    activate Email
+    Email --> Customer : order confirmed
+    deactivate Email
+    Cart --> Customer : order placed
+}
+else payment failure {
+    Payment --> Cart : declined
+    deactivate Payment
+
+    Cart -> Inventory : release reservation
+    Cart --> Customer : payment failed
+}

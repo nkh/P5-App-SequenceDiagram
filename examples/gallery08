@@ -1,0 +1,36 @@
+# Database connection pool — borrow, use, return, overflow
+
+participant Application as App
+participant PoolManager as Pool
+participant Database as DB
+
+App -> Pool : acquire connection
+activate Pool
+
+alt connection available {
+    Pool --> App : connection handle
+    deactivate Pool
+
+    activate App
+    App -> DB : execute query
+    activate DB
+    DB --> App : result set
+    deactivate DB
+    deactivate App
+
+    App -> Pool : release connection
+    Pool --> App : ack
+}
+else pool exhausted {
+    loop wait for slot {
+        Pool -> Pool : check availability
+        break {
+            Pool --> App : connection handle
+        }
+    }
+    deactivate Pool
+
+    opt timeout reached {
+        Pool --> App : pool timeout error
+    }
+}

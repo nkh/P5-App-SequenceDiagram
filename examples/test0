@@ -1,0 +1,33 @@
+# comment
+actor User
+participant ATM
+participant BankServer
+
+User -> ATM : "Insert Card"
+activate ATM
+
+create Session
+ATM -> Session : "Initialize"
+
+critical "Atomic Transaction" {
+    ATM -> BankServer : "Request Withdrawal"
+    activate BankServer
+    
+    state BankServer : "{balance > amount}"
+    ref BankServer : "ProcessTransaction"
+
+    assert BankServer {  "Connection Secure" -> sink : "to the sink" }
+
+    break "Fraud Detected" {
+        create FraudService
+        BankServer -> FraudService : "Alert"
+        destroy Session
+        BankServer --> ATM : "Error: Blocked"
+    }
+    
+    BankServer --> ATM : "Dispense Cash"
+    deactivate BankServer
+}
+
+destroy Session
+deactivate ATM
